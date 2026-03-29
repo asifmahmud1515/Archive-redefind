@@ -6,3 +6,20 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Expo
+.expo/
+.expo-shared/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Build
+.gradle/
+android/local.properties
