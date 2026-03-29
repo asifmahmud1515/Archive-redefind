@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout source code
+      # 1️⃣ Checkout repo
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -19,38 +19,42 @@ jobs:
         with:
           node-version: '22'
 
-      # 3️⃣ Install project dependencies
+      # 3️⃣ Install dependencies
       - name: Install Dependencies
         run: npm ci
 
-      # 4️⃣ Set Gemini API Key from GitHub Secrets
+      # 4️⃣ Install Expo CLI & EAS CLI (if using Expo)
+      - name: Install Expo & EAS CLI
+        run: |
+          npm install -g expo-cli eas-cli
+
+      # 5️⃣ Inject Gemini API Key safely
       - name: Inject Gemini API Key
         run: echo "VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}" >> $GITHUB_ENV
 
-      # 5️⃣ Optional: Create local .env for dev/test
+      # 6️⃣ Optional: create .env file for build
       - name: Create .env file
-        run: |
-          echo "VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}" > .env
+        run: echo "VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}" > .env
 
-      # 6️⃣ Build the web app (Vite/React)
+      # 7️⃣ Build web app (Vite/React)
       - name: Build Web App
         run: npm run build
 
-      # 7️⃣ Sync with Capacitor for Android (React + Capacitor setup)
+      # 8️⃣ Capacitor Sync for Android (skip if using Expo)
       - name: Capacitor Sync
         run: |
           npx cap copy android
           npx cap sync android
 
-      # 8️⃣ Build Android APK
+      # 9️⃣ Build Android APK
       - name: Build APK
         run: |
           cd android
           ./gradlew assembleRelease
 
-      # 9️⃣ Upload APK as artifact
+      # 🔟 Upload APK artifact (updated to v4)
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: AIStudio-App-Release.apk
           path: android/app/build/outputs/apk/release/app-release.apk
