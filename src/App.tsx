@@ -219,18 +219,22 @@ export default function App() {
               {/* Stories Bar */}
               <div className="flex space-x-4 overflow-x-auto pb-6 mb-6 no-scrollbar px-2">
                 {['UFO_NODE', 'AREA_51', 'VOYNICH', 'MK_ULTRA', 'APOLLO', 'TESLA'].map((node, i) => (
-                  <div key={node} className="flex flex-col items-center space-y-2 flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-neon-cyan to-transparent">
+                  <button
+                    key={node}
+                    onClick={() => fetchItems(node, true)}
+                    className="flex flex-col items-center space-y-2 flex-shrink-0 hover:opacity-100 opacity-70 transition-opacity duration-200 cursor-pointer"
+                  >
+                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-neon-cyan to-transparent hover:shadow-lg hover:shadow-neon-cyan/50 transition-shadow duration-200">
                       <div className="w-full h-full rounded-full bg-black border border-white/10 flex items-center justify-center overflow-hidden">
                         <img 
                           src={`https://picsum.photos/seed/${node}/100/100`} 
                           alt={node}
-                          className="w-full h-full object-cover opacity-60"
+                          className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity duration-200"
                         />
                       </div>
                     </div>
                     <span className="font-mono text-[7px] text-white/40 tracking-tighter">{node}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
               
