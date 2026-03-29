@@ -1,0 +1,5 @@
+{
+  "name": "Archive Neural Interface",
+  "description": "A high-fidelity, futuristic client for the Internet Archive, optimized for mobile WebView deployment.",
+  "requestFramePermissions": []
+}
