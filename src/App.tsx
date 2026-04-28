@@ -30,6 +30,8 @@ import { BottomNav } from './components/BottomNav';
 import { DossierCard } from './components/DossierCard';
 import { BiometricHandshake } from './components/BiometricHandshake';
 import { MediaPlayer } from './components/MediaPlayer';
+import { FullscreenMediaPlayer } from './components/FullscreenMediaPlayer';
+import { ReelsView } from './components/ReelsView';
 
 export default function App() {
   const [state, setState] = useState<AppState>(() => {
@@ -54,6 +56,8 @@ export default function App() {
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [fullscreenItem, setFullscreenItem] = useState<ArchiveItem | null>(null);
+  const [showReels, setShowReels] = useState(false);
 
   // Persistence effect
   useEffect(() => {
@@ -219,18 +223,22 @@ export default function App() {
               {/* Stories Bar */}
               <div className="flex space-x-4 overflow-x-auto pb-6 mb-6 no-scrollbar px-2">
                 {['UFO_NODE', 'AREA_51', 'VOYNICH', 'MK_ULTRA', 'APOLLO', 'TESLA'].map((node, i) => (
-                  <div key={node} className="flex flex-col items-center space-y-2 flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-neon-cyan to-transparent">
+                  <button
+                    key={node}
+                    onClick={() => fetchItems(node, true)}
+                    className="flex flex-col items-center space-y-2 flex-shrink-0 hover:opacity-100 opacity-70 transition-opacity duration-200 cursor-pointer"
+                  >
+                    <div className="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-neon-cyan to-transparent hover:shadow-lg hover:shadow-neon-cyan/50 transition-shadow duration-200">
                       <div className="w-full h-full rounded-full bg-black border border-white/10 flex items-center justify-center overflow-hidden">
                         <img 
                           src={`https://picsum.photos/seed/${node}/100/100`} 
                           alt={node}
-                          className="w-full h-full object-cover opacity-60"
+                          className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity duration-200"
                         />
                       </div>
                     </div>
                     <span className="font-mono text-[7px] text-white/40 tracking-tighter">{node}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
               
@@ -392,7 +400,10 @@ export default function App() {
               </button>
 
               <div className="space-y-6">
-                <MediaPlayer item={state.selectedItem} />
+                <MediaPlayer 
+                  item={state.selectedItem}
+                  onFullscreen={() => setFullscreenItem(state.selectedItem)}
+                />
 
                 <div className="glass p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-3">
@@ -496,7 +507,33 @@ export default function App() {
       </AnimatePresence>
 
       {/* Navigation */}
-      <BottomNav currentView={state.currentView} onViewChange={handleViewChange} />
+      <BottomNav 
+        currentView={state.currentView} 
+        onViewChange={handleViewChange}
+        onReelsClick={() => setShowReels(true)}
+      />
+
+      {/* Fullscreen Media Player Modal */}
+      <AnimatePresence>
+        {fullscreenItem && (
+          <FullscreenMediaPlayer 
+            item={fullscreenItem}
+            onClose={() => setFullscreenItem(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Reels View Modal */}
+      <AnimatePresence>
+        {showReels && (
+          <ReelsView
+            items={items}
+            isLoading={isLoadingMore}
+            onLoadMore={() => fetchItems(undefined, false)}
+            onBack={() => setShowReels(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

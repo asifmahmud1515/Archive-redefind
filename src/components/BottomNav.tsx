@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Archive, Search, Shield, User } from 'lucide-react';
+import { Archive, Search, Shield, User, Film } from 'lucide-react';
 import { ViewType } from '../types';
 
 interface BottomNavProps {
   currentView: ViewType;
   onViewChange: (view: ViewType) => void;
+  onReelsClick?: () => void;
 }
 
-export const BottomNav: React.FC<BottomNavProps> = ({ currentView, onViewChange }) => {
+export const BottomNav: React.FC<BottomNavProps> = ({ currentView, onViewChange, onReelsClick }) => {
   const navItems = [
     { id: 'dossier', icon: Archive, label: 'DOSSIER' },
     { id: 'explore', icon: Search, label: 'EXPLORE' },
@@ -53,6 +54,26 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentView, onViewChange 
             </button>
           );
         })}
+        
+        {/* Reels Button */}
+        {onReelsClick && (
+          <button
+            onClick={onReelsClick}
+            className="relative flex flex-col items-center justify-center w-16 h-full group"
+            title="Open Reels"
+          >
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="p-2 rounded-lg transition-colors text-white/40 group-hover:text-white/60"
+            >
+              <Film size={24} strokeWidth={2} />
+            </motion.div>
+            
+            <span className="font-mono text-[8px] tracking-tighter transition-colors text-white/20">
+              REELS
+            </span>
+          </button>
+        )}
       </div>
     </nav>
   );
