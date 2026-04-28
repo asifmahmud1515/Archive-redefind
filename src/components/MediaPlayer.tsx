@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Play, FileText, Loader2, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Play, FileText, Loader2, AlertTriangle, ExternalLink, Maximize2 } from 'lucide-react';
 import { ArchiveItem } from '../types';
 import { archiveService } from '../services/archiveService';
 
 interface MediaPlayerProps {
   item: ArchiveItem;
+  onFullscreen?: () => void;
 }
 
-export const MediaPlayer: React.FC<MediaPlayerProps> = ({ item }) => {
+export const MediaPlayer: React.FC<MediaPlayerProps> = ({ item, onFullscreen }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -50,12 +51,23 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ item }) => {
             Live Decryption Protocol Active
           </span>
         </div>
-        <button 
-          onClick={() => window.open(archiveService.getDetailsUrl(item.identifier), '_blank')}
-          className="font-mono text-[8px] text-neon-cyan hover:underline uppercase tracking-widest flex items-center"
-        >
-          Source Terminal <ExternalLink size={8} className="ml-1" />
-        </button>
+        <div className="flex items-center space-x-3">
+          {onFullscreen && (
+            <button 
+              onClick={onFullscreen}
+              className="font-mono text-[8px] text-neon-cyan hover:underline uppercase tracking-widest flex items-center hover:text-cyan-400 transition-colors"
+              title="Open fullscreen"
+            >
+              Fullscreen <Maximize2 size={8} className="ml-1" />
+            </button>
+          )}
+          <button 
+            onClick={() => window.open(archiveService.getDetailsUrl(item.identifier), '_blank')}
+            className="font-mono text-[8px] text-neon-cyan hover:underline uppercase tracking-widest flex items-center hover:text-cyan-400 transition-colors"
+          >
+            Source Terminal <ExternalLink size={8} className="ml-1" />
+          </button>
+        </div>
       </div>
     </motion.div>
   );

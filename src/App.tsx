@@ -30,6 +30,8 @@ import { BottomNav } from './components/BottomNav';
 import { DossierCard } from './components/DossierCard';
 import { BiometricHandshake } from './components/BiometricHandshake';
 import { MediaPlayer } from './components/MediaPlayer';
+import { FullscreenMediaPlayer } from './components/FullscreenMediaPlayer';
+import { ReelsView } from './components/ReelsView';
 
 export default function App() {
   const [state, setState] = useState<AppState>(() => {
@@ -54,6 +56,8 @@ export default function App() {
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [fullscreenItem, setFullscreenItem] = useState<ArchiveItem | null>(null);
+  const [showReels, setShowReels] = useState(false);
 
   // Persistence effect
   useEffect(() => {
@@ -396,7 +400,10 @@ export default function App() {
               </button>
 
               <div className="space-y-6">
-                <MediaPlayer item={state.selectedItem} />
+                <MediaPlayer 
+                  item={state.selectedItem}
+                  onFullscreen={() => setFullscreenItem(state.selectedItem)}
+                />
 
                 <div className="glass p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-3">
@@ -500,7 +507,33 @@ export default function App() {
       </AnimatePresence>
 
       {/* Navigation */}
-      <BottomNav currentView={state.currentView} onViewChange={handleViewChange} />
+      <BottomNav 
+        currentView={state.currentView} 
+        onViewChange={handleViewChange}
+        onReelsClick={() => setShowReels(true)}
+      />
+
+      {/* Fullscreen Media Player Modal */}
+      <AnimatePresence>
+        {fullscreenItem && (
+          <FullscreenMediaPlayer 
+            item={fullscreenItem}
+            onClose={() => setFullscreenItem(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Reels View Modal */}
+      <AnimatePresence>
+        {showReels && (
+          <ReelsView
+            items={items}
+            isLoading={isLoadingMore}
+            onLoadMore={() => fetchItems(undefined, false)}
+            onBack={() => setShowReels(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
