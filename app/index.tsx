@@ -9,7 +9,6 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
-  Modal,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -28,7 +27,6 @@ export default function HomeScreen() {
   const [items, setItems] = useState<ArchiveItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [nodeID] = useState(Math.random().toString(36).substring(7).toUpperCase());
 
   const fetchItems = useCallback(async (query?: string, shouldSearch: boolean = true) => {
     if (!shouldSearch && !query) {
@@ -83,155 +81,234 @@ export default function HomeScreen() {
     <TouchableOpacity
       key={topic}
       onPress={() => fetchItems(topic, true)}
-      className="flex items-center mr-4"
+      style={{
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginRight: 16,
+      }}
     >
-      <View className="w-16 h-16 rounded-full border-2 border-cyan-400 bg-black justify-center items-center">
+      <View
+        style={{
+          width: 64,
+          height: 64,
+          borderRadius: 32,
+          borderWidth: 2,
+          borderColor: '#06b6d4',
+          backgroundColor: '#000000',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Image
           source={{ uri: `https://picsum.photos/seed/${topic}/100/100` }}
-          className="w-full h-full rounded-full opacity-60"
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 32,
+            opacity: 0.6,
+          }}
         />
       </View>
-      <Text className="text-xs text-white/40 mt-2 text-center max-w-16">{topic}</Text>
+      <Text
+        style={{
+          fontSize: 12,
+          color: 'rgba(255, 255, 255, 0.4)',
+          marginTop: 8,
+          textAlign: 'center',
+          maxWidth: 64,
+        }}
+      >
+        {topic}
+      </Text>
     </TouchableOpacity>
   );
 
   const renderItemCard = ({ item }: { item: ArchiveItem }) => (
     <TouchableOpacity
       onPress={() => setState(prev => ({ ...prev, currentView: 'detail', selectedItem: item }))}
-      className="bg-white/5 border border-white/10 rounded-lg p-4 mb-4 mx-4"
+      style={{
+        backgroundColor: '#1a1a1a',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 12,
+      }}
     >
-      <Image
-        source={{ uri: archiveService.getItemImageUrl(item.identifier) }}
-        className="w-full h-40 rounded-lg mb-3 bg-black/50"
-      />
-      <Text className="text-white font-semibold text-sm mb-1" numberOfLines={2}>
+      <Text
+        style={{
+          fontSize: 14,
+          fontWeight: '600',
+          color: '#ffffff',
+          marginBottom: 4,
+        }}
+        numberOfLines={2}
+      >
         {item.title}
       </Text>
-      <Text className="text-white/60 text-xs mb-3" numberOfLines={2}>
-        {item.description || 'No description'}
+      <Text
+        style={{
+          fontSize: 12,
+          color: 'rgba(255, 255, 255, 0.6)',
+        }}
+        numberOfLines={1}
+      >
+        {item.creator}
       </Text>
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <MaterialIcons name="download" size={14} color="#ffffff" />
-          <Text className="text-white/60 text-xs ml-1">{item.downloads || 0}</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => handleAddToVault(item)}
-          className="bg-cyan-500/20 px-3 py-1 rounded-full"
-        >
-          <Text className="text-cyan-400 text-xs font-medium">Add to Vault</Text>
-        </TouchableOpacity>
-      </View>
     </TouchableOpacity>
   );
 
-  if (!state.isHandshakeComplete) {
-    return (
-      <SafeAreaView className="flex-1 bg-black justify-center items-center">
-        <Text className="text-white text-2xl font-bold mb-4">Archive</Text>
-        <Text className="text-white/60 text-center px-6 mb-8">
-          Initialize neural handshake to access classified archives
-        </Text>
-        <TouchableOpacity
-          onPress={() => setState(prev => ({ ...prev, isHandshakeComplete: true }))}
-          className="bg-cyan-500 px-8 py-3 rounded-lg"
-        >
-          <Text className="text-black font-bold">Initialize</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView className="flex-1 bg-black">
-      <ScrollView className="flex-1">
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: '#050505',
+      }}
+    >
+      <View style={{ flex: 1 }}>
         {/* Header */}
-        <View className="px-4 py-6">
-          <Text className="text-white text-2xl font-bold mb-2">Archive Explorer</Text>
-          <Text className="text-white/60 text-xs font-mono">Node: {nodeID}</Text>
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderBottomWidth: 1,
+            borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: '#06b6d4',
+              letterSpacing: 2,
+            }}
+          >
+            ARCHIVE
+          </Text>
         </View>
 
         {/* Search Bar */}
-        <View className="px-4 mb-6">
-          <View className="flex-row items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3">
-            <MaterialIcons name="search" size={20} color="#ffffff" />
+        <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#1a1a1a',
+              borderWidth: 1,
+              borderColor: 'rgba(6, 182, 212, 0.3)',
+              borderRadius: 8,
+              paddingHorizontal: 12,
+            }}
+          >
+            <MaterialIcons name="search" size={20} color="rgba(255, 255, 255, 0.4)" />
             <TextInput
-              placeholder="Search archives..."
-              placeholderTextColor="#ffffff80"
+              style={{
+                flex: 1,
+                color: '#ffffff',
+                paddingVertical: 10,
+                paddingHorizontal: 8,
+              }}
+              placeholder="Search Archive..."
+              placeholderTextColor="rgba(255, 255, 255, 0.3)"
               value={searchQuery}
               onChangeText={setSearchQuery}
               onSubmitEditing={() => fetchItems(searchQuery, true)}
-              className="flex-1 ml-2 text-white"
             />
           </View>
         </View>
 
-        {/* Stories Bar */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4 mb-6">
-          {['UFO_NODE', 'AREA_51', 'VOYNICH', 'MK_ULTRA', 'APOLLO', 'TESLA'].map(renderStoryButton)}
+        {/* Stories */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        >
+          <View style={{ flexDirection: 'row' }}>
+            {['UFO_NODE', 'AREA_51', 'VOYNICH', 'MK_ULTRA', 'APOLLO', 'TESLA'].map(topic =>
+              renderStoryButton(topic),
+            )}
+          </View>
         </ScrollView>
 
-        {/* Items List */}
-        {isLoading ? (
-          <View className="flex-1 justify-center items-center py-12">
-            <ActivityIndicator size="large" color="#00ffff" />
-          </View>
-        ) : items.length > 0 ? (
-          <FlatList
-            data={items}
-            renderItem={renderItemCard}
-            keyExtractor={item => item.identifier}
-            scrollEnabled={false}
-            contentContainerStyle={{ paddingBottom: 20 }}
-          />
-        ) : (
-          <View className="flex-1 justify-center items-center py-12">
-            <MaterialIcons name="inventory-2" size={48} color="#ffffff40" />
-            <Text className="text-white/60 mt-4">No archives found</Text>
-          </View>
-        )}
-      </ScrollView>
+        {/* Content */}
+        <ScrollView
+          style={{
+            flex: 1,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+          }}
+        >
+          {isLoading && items.length === 0 ? (
+            <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 40 }}>
+              <ActivityIndicator size="large" color="#06b6d4" />
+              <Text style={{ color: 'rgba(255, 255, 255, 0.4)', marginTop: 12 }}>
+                Searching archive...
+              </Text>
+            </View>
+          ) : items.length > 0 ? (
+            <FlatList
+              scrollEnabled={false}
+              data={items}
+              keyExtractor={item => item.identifier}
+              renderItem={renderItemCard}
+            />
+          ) : (
+            <View style={{ paddingVertical: 40 }}>
+              <Text style={{ color: 'rgba(255, 255, 255, 0.4)', textAlign: 'center' }}>
+                No items found. Try searching or selecting a story.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </View>
 
-      {/* Detail Modal */}
-      <Modal
-        visible={state.currentView === 'detail' && !!state.selectedItem}
-        onRequestClose={() => setState(prev => ({ ...prev, currentView: 'dossier', selectedItem: null }))}
-        animationType="slide"
+      {/* Bottom Navigation */}
+      <View
+        style={{
+          flexDirection: 'row',
+          borderTopWidth: 1,
+          borderTopColor: 'rgba(255, 255, 255, 0.05)',
+          backgroundColor: '#0a0a0a',
+        }}
       >
-        {state.selectedItem && (
-          <SafeAreaView className="flex-1 bg-black">
-            <ScrollView>
-              <TouchableOpacity
-                onPress={() => setState(prev => ({ ...prev, currentView: 'dossier', selectedItem: null }))}
-                className="flex-row items-center px-4 py-4"
-              >
-                <MaterialIcons name="arrow-back" size={24} color="#ffffff" />
-                <Text className="text-white ml-2">Back</Text>
-              </TouchableOpacity>
-
-              <Image
-                source={{ uri: archiveService.getItemImageUrl(state.selectedItem.identifier) }}
-                className="w-full h-80 bg-black/50"
-              />
-
-              <View className="px-4 py-6">
-                <Text className="text-white text-2xl font-bold mb-4">{state.selectedItem.title}</Text>
-                <Text className="text-white/80 text-base leading-6 mb-4">
-                  {state.selectedItem.description || 'No description available'}
-                </Text>
-
-                <TouchableOpacity
-                  onPress={() => handleAddToVault(state.selectedItem!)}
-                  className="bg-cyan-500 py-4 rounded-lg mb-4 flex-row items-center justify-center"
-                >
-                  <MaterialIcons name="vault" size={20} color="#000000" />
-                  <Text className="text-black font-bold ml-2">Add to Vault</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          </SafeAreaView>
-        )}
-      </Modal>
+        {['dossier', 'explore', 'vault', 'profile'].map(view => (
+          <TouchableOpacity
+            key={view}
+            onPress={() => setState(prev => ({ ...prev, currentView: view as ViewType }))}
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: state.currentView === view ? 1 : 0.5,
+            }}
+          >
+            <MaterialIcons
+              name={
+                view === 'dossier'
+                  ? 'folder'
+                  : view === 'explore'
+                    ? 'search'
+                    : view === 'vault'
+                      ? 'security'
+                      : 'person'
+              }
+              size={24}
+              color={state.currentView === view ? '#06b6d4' : 'rgba(255, 255, 255, 0.4)'}
+            />
+            <Text
+              style={{
+                fontSize: 10,
+                color: state.currentView === view ? '#06b6d4' : 'rgba(255, 255, 255, 0.4)',
+                marginTop: 4,
+                letterSpacing: 1,
+              }}
+            >
+              {view.toUpperCase()}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </SafeAreaView>
   );
 }

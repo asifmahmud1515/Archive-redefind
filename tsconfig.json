@@ -18,6 +18,6 @@
     },
     "jsx": "react-jsx"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["app/**/*.ts", "app/**/*.tsx", "src/types.ts", "src/services/**/*.ts"],
+  "exclude": ["node_modules", "dist", "src/components", "src/App.tsx", "src/main.tsx"]
 }
